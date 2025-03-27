@@ -48,7 +48,7 @@ cluster_token=$(echo $response | jq -r '.data.cluster_token')
 
 if [[ -z "$registration_id" || -z "$cluster_token" ]]; then
   echo "Error: registration_id or cluster_token is null or empty. Failing the job."
-  false
+  exit 1
 fi
 
 
@@ -68,7 +68,7 @@ elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
     ARCH_TYPE="arm64"
 else
     echo "Unsupported architecture: $ARCH"
-    false
+    exit 1
 fi
 
 echo "Detected architecture: $ARCH_TYPE"
@@ -92,7 +92,7 @@ kubectl version --client
 
 if ! command -v kubectl &> /dev/null; then
     echo "Error: kubectl not found. Please install kubectl."
-    false
+    exit 1
 fi
 
 # Namespace validation
@@ -142,7 +142,7 @@ TOTAL_PODS=$(kubectl get pods --all-namespaces --no-headers 2>/dev/null | wc -l)
 # Check if the command succeeded
 if [ $? -ne 0 ]; then
     echo "Error: Failed to fetch pod details. Please check if Kubernetes is running and kubectl is configured correctly." >&2
-    false
+    exit 1
 fi
 
 echo "Total number of pods in the cluster: $TOTAL_PODS"
@@ -161,7 +161,7 @@ check_var() {
     VAR_NAME="$1"
     if [ -z "${!VAR_NAME:-}" ]; then
         echo "Error: $VAR_NAME is not set"
-        false
+        exit 1
     fi
 }
 check_var CLUSTER_TOKEN
@@ -185,12 +185,12 @@ helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens
     --set prometheus.server.persistentVolume.enabled="$PVC_ENABLED" \
     --set prometheus.server.resources.requests.cpu="$CPU_REQUEST" \
     --set prometheus.server.resources.requests.memory="$MEMORY_REQUEST" \
-    --wait || { echo "Error: Helm deployment failed."; false; }
+    --wait || { echo "Error: Helm deployment failed."; exit 1; }
 
 kubectl wait --for=condition=ready pod -l app=onelens-agent -n onelens-agent --timeout=300s || {
     echo "Error: Pods failed to become ready."
     echo "Installation Failed."
-    false
+    exit 1
 }
 
 echo "Installation complete."
