@@ -17,6 +17,7 @@ send_logs() {
 
 # Trap EXIT and ERR signals to send logs before exiting
 trap 'send_logs; exit 1' ERR
+trap 'send_logs' EXIT
 
 
 # Set default values if variables are not set
@@ -165,14 +166,8 @@ check_var() {
     fi
 }
 check_var CLUSTER_TOKEN
-check_var RELEASE_VERSION
 check_var CLUSTER_NAME
-check_var API_BASE_URL
 check_var REGISTRATION_ID
-check_var IMAGE_TAG
-check_var PVC_ENABLED
-check_var CPU_REQUEST
-check_var MEMORY_REQUEST
 
 helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens/onelens-agent \
     --version "$RELEASE_VERSION" \
