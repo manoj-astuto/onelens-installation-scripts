@@ -6,14 +6,15 @@ TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
 
 # Capture all script output
-script -q -c "sh $0" "$LOG_FILE"
+exec > >(tee -a "$LOG_FILE") 2>&1
 
 # Function to send logs before exiting
 send_logs() {
     echo "Sending logs to API..."
     sleep 2
+    sync
     echo "***********************************************************************************************"
-    tail -n +1  $LOG_FILE
+    cat $LOG_FILE
 }
 
 # Trap EXIT and ERR signals to send logs before exiting
