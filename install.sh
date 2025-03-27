@@ -4,6 +4,7 @@ set -eu
 
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
+
 # Capture all script output
 exec > >(tee "$LOG_FILE") 2>&1
 
@@ -12,7 +13,7 @@ send_logs() {
     echo "Sending logs to API..."
     sleep 2
     echo "***********************************************************************************************"
-    cat $LOG_FILE
+    tail -n +1  $LOG_FILE
 }
 
 # Trap EXIT and ERR signals to send logs before exiting
