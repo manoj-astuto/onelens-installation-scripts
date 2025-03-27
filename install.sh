@@ -160,7 +160,7 @@ fi
 
 check_var() {
     VAR_NAME="$1"
-    if [ -z "${!VAR_NAME:-}" ]; then
+    if [ -z "${!VAR_NAME}" ]; then
         echo "Error: $VAR_NAME is not set"
         exit 1
     fi
