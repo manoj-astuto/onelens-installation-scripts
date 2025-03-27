@@ -159,15 +159,16 @@ else
 fi
 
 check_var() {
-    VAR_NAME="$1"
-    if [ -z "${!VAR_NAME}" ]; then
-        echo "Error: $VAR_NAME is not set"
+    VAR_VALUE=$(eval echo \$$1)
+    if [ -z "$VAR_VALUE" ]; then
+        echo "Error: $1 is not set"
         exit 1
     fi
 }
 check_var CLUSTER_TOKEN
 check_var CLUSTER_NAME
 check_var REGISTRATION_ID
+
 
 helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens/onelens-agent \
     --version "$RELEASE_VERSION" \
