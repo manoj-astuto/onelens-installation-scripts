@@ -157,6 +157,17 @@ else
     MEMORY_REQUEST="4000Mi"
 fi
 
+# Ensure required environment variables are set
+: "${CLUSTER_TOKEN:?Error: CLUSTER_TOKEN is not set}"
+: "${RELEASE_VERSION:?Error: RELEASE_VERSION is not set}"
+: "${CLUSTER_NAME:?Error: CLUSTER_NAME is not set}"
+: "${API_BASE_URL:?Error: API_BASE_URL is not set}"
+: "${REGISTRATION_ID:?Error: REGISTRATION_ID is not set}"
+: "${IMAGE_TAG:?Error: IMAGE_TAG is not set}"
+: "${PVC_ENABLED:?Error: PVC_ENABLED is not set}"
+: "${CPU_REQUEST:?Error: CPU_REQUEST is not set}"
+: "${MEMORY_REQUEST:?Error: MEMORY_REQUEST is not set}"
+
 helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens/onelens-agent \
     --version "$RELEASE_VERSION" \
     --set onelens-agent.env.CLUSTER_NAME="$CLUSTER_NAME" \
