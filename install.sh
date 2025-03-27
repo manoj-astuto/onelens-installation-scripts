@@ -1,8 +1,23 @@
 #!/bin/sh
-set -eux
+set -eu
+
 
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-LOG_FILE="/tmp/${ACCOUNT}_${CLUSTER_NAME}_${TIMESTAMP}.log"
+LOG_FILE="/tmp/${TIMESTAMP}.log"
+# Capture all script output
+exec > >(tee "$LOG_FILE") 2>&1
+
+# Function to send logs before exiting
+send_logs() {
+    echo "Sending logs to API..."
+    sleep 2
+    echo "***********************************************************************************************"
+    cat $LOG_FILE
+}
+
+# Trap EXIT and ERR signals to send logs before exiting
+trap 'send_logs; exit 1' ERR
+
 
 # Set default values if variables are not set
 : "${RELEASE_VERSION:=0.1.1-beta.2}"
@@ -14,25 +29,6 @@ LOG_FILE="/tmp/${ACCOUNT}_${CLUSTER_NAME}_${TIMESTAMP}.log"
 # Export the variables so they are available in the environment
 export RELEASE_VERSION IMAGE_TAG API_BASE_URL TOKEN PVC_ENABLED
 
-# Capture all script output
-exec > >(tee "$LOG_FILE") 2>&1
-
-# Function to send logs before exiting
-send_logs() {
-    echo "Sending logs to API..."
-    sleep 2
-    curl -X POST "https://$API_BASE_URL/v1/kubernetes/registration" \
-        -H "X-Secret-Token: $TOKEN" \
-        -H "Content-Type: application/json" \
-        -d '{
-            "registration_id": "$registration_id",
-            "cluster_token": "$cluster_token",
-            "status": "$(cat "$LOG_FILE")"
-        }'
-}
-
-# Trap EXIT and ERR signals to send logs before exiting
-trap 'send_logs; exit 1' ERR
 
 response=$(curl -X POST \
   https://$API_BASE_URL/v1/kubernetes/registration \
