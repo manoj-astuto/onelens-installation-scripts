@@ -5,20 +5,18 @@ set -eu
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
 
-exec > >(tee -a "$LOG_FILE") 2>&1
+exec > >(tee "$LOG_FILE") 2>&1
 
 # Function to send logs before exiting
 send_logs() {
     echo "Sending logs to API..."
     sleep 2
-    sync
     echo "***********************************************************************************************"
     cat $LOG_FILE
 }
 
 # Trap EXIT and ERR signals to send logs before exiting
 trap 'send_logs; exit 1' ERR
-trap 'send_logs' EXIT
 
 
 # Set default values if variables are not set
