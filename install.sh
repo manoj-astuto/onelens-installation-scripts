@@ -5,7 +5,6 @@ set -eu
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
 
-# Capture all script output
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 # Function to send logs before exiting
