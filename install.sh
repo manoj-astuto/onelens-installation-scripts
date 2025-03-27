@@ -157,16 +157,22 @@ else
     MEMORY_REQUEST="4000Mi"
 fi
 
-# Ensure required environment variables are set
-: "${CLUSTER_TOKEN:?Error: CLUSTER_TOKEN is not set}"
-: "${RELEASE_VERSION:?Error: RELEASE_VERSION is not set}"
-: "${CLUSTER_NAME:?Error: CLUSTER_NAME is not set}"
-: "${API_BASE_URL:?Error: API_BASE_URL is not set}"
-: "${REGISTRATION_ID:?Error: REGISTRATION_ID is not set}"
-: "${IMAGE_TAG:?Error: IMAGE_TAG is not set}"
-: "${PVC_ENABLED:?Error: PVC_ENABLED is not set}"
-: "${CPU_REQUEST:?Error: CPU_REQUEST is not set}"
-: "${MEMORY_REQUEST:?Error: MEMORY_REQUEST is not set}"
+check_var() {
+    VAR_NAME="$1"
+    if [ -z "${!VAR_NAME:-}" ]; then
+        echo "Error: $VAR_NAME is not set"
+        false
+    fi
+}
+check_var CLUSTER_TOKEN
+check_var RELEASE_VERSION
+check_var CLUSTER_NAME
+check_var API_BASE_URL
+check_var REGISTRATION_ID
+check_var IMAGE_TAG
+check_var PVC_ENABLED
+check_var CPU_REQUEST
+check_var MEMORY_REQUEST
 
 helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens/onelens-agent \
     --version "$RELEASE_VERSION" \
