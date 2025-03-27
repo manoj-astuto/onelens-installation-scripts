@@ -6,7 +6,7 @@ TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
 
 # Capture all script output
-exec > >(tee "$LOG_FILE") 2>&1
+script -q -c "sh $0" "$LOG_FILE"
 
 # Function to send logs before exiting
 send_logs() {
