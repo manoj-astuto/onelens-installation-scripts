@@ -49,6 +49,13 @@ response=$(curl -X POST \
 registration_id=$(echo $response | jq -r '.data.registration_id')
 cluster_token=$(echo $response | jq -r '.data.cluster_token')
 
+
+if [[ -z "$registration_id" || -z "$cluster_token" ]]; then
+  echo "Error: registration_id or cluster_token is null or empty. Failing the job."
+  false
+fi
+
+
 # Step 0: Checking prerequisites
 echo "Step 0: Checking prerequisites..."
 
