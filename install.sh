@@ -166,7 +166,6 @@ check_var() {
     fi
 }
 check_var CLUSTER_TOKEN
-check_var CLUSTER_NAME
 check_var REGISTRATION_ID
 
 
