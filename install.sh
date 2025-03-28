@@ -21,7 +21,7 @@ trap 'send_logs; exit 1' ERR EXIT
 # Set default values if variables are not set
 : "${RELEASE_VERSION:=0.1.1-beta.2}"
 : "${IMAGE_TAG:=v0.1.1-beta.2}"
-: "${API_BASE_URL:=dev-api.onelens.cloud}"
+: "${API_BASE_URL:=https://dev-api.onelens.cloud}"
 : "${TOKEN:=OWMyN2FhZjUtYzljMC00ZWI5LTg1MTgtMWU5NzM0NjllMDU2}"
 : "${PVC_ENABLED:=true}"
 
@@ -30,7 +30,7 @@ export RELEASE_VERSION IMAGE_TAG API_BASE_URL TOKEN PVC_ENABLED
 
 
 response=$(curl -X POST \
-  "http://$API_BASE_URL/v1/kubernetes/registration" \
+  "$API_BASE_URL/v1/kubernetes/registration" \
   -H "X-Secret-Token: $TOKEN" \
   -H "Content-Type: application/json" \
   -d "{
@@ -190,7 +190,7 @@ echo "Installation complete."
 
 echo " Printing $REGISTRATION_ID"
 echo "Printing $CLUSTER_TOKEN"
-curl -X PUT "http://$API_BASE_URL/v1/kubernetes/registration" \
+curl -X PUT "$API_BASE_URL/v1/kubernetes/registration" \
     -H "X-Secret-Token: $TOKEN" \
     -H "Content-Type: application/json" \
     -d "{
