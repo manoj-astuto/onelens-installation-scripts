@@ -188,7 +188,7 @@ kubectl wait --for=condition=ready pod -l app=onelens-agent -n onelens-agent --t
 }
 
 echo "Installation complete."
-curl -X PUT "https://$API_BASE_URL/v1/kubernetes/registration" \
+curl -X PUT "http://$API_BASE_URL/v1/kubernetes/registration" \
     -H "X-Secret-Token: $TOKEN" \
     -H "Content-Type: application/json" \
     -d "{
