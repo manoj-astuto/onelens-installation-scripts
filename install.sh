@@ -50,9 +50,8 @@ if [[ -n "$registration_id" && "$registration_id" != "null" && -n "$cluster_toke
 else
     echo "One or both of registration_id and cluster_token are empty or null."
     exit 1
-    false
 fi
-
+sleep 100
 # Step 0: Checking prerequisites
 echo "Step 0: Checking prerequisites..."
 
@@ -153,8 +152,6 @@ helm repo add onelens https://manoj-astuto.github.io/onelens-charts && helm repo
 if [ "$TOTAL_PODS" -lt 100 ]; then
     CPU_REQUEST="500m"
     MEMORY_REQUEST="2000Mi"
-    echo "error1"
-    exit 1 
 else
     CPU_REQUEST="1000m"
     MEMORY_REQUEST="4000Mi"
