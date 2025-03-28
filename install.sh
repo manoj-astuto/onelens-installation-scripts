@@ -50,6 +50,7 @@ if [[ -n "$registration_id" && "$registration_id" != "null" && -n "$cluster_toke
 else
     echo "One or both of registration_id and cluster_token are empty or null."
     exit 1
+    false
 fi
 
 # Step 0: Checking prerequisites
