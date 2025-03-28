@@ -2,6 +2,7 @@
 set -ex
 trap -p
 
+# Phase 1: Logging Setup
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
 touch "$LOG_FILE"
@@ -18,7 +19,7 @@ send_logs() {
 # Ensure send_logs runs before exit
 trap 'send_logs; exit 1' ERR EXIT
 
-# Set default values if variables are not set
+# Phase 2: Environment Variable Setup
 : "${RELEASE_VERSION:=0.1.1-beta.2}"
 : "${IMAGE_TAG:=v0.1.1-beta.2}"
 : "${API_BASE_URL:=https://dev-api.onelens.cloud}"
@@ -34,6 +35,7 @@ else
     echo "REGISTRATION_TOKEN is set"
 fi
 
+# Phase 3: API Registration
 response=$(curl -X POST \
   "$API_BASE_URL/v1/kubernetes/registration" \
   -H "X-Secret-Token: $TOKEN" \
@@ -56,7 +58,8 @@ else
     exit 1
 fi
 sleep 2
-# Step 0: Checking prerequisites
+
+# Phase 4: Prerequisite Checks
 echo "Step 0: Checking prerequisites..."
 
 # Define versions
@@ -77,7 +80,7 @@ fi
 
 echo "Detected architecture: $ARCH_TYPE"
 
-# Install Helm
+# Phase 5: Install Helm
 echo "Installing Helm for $ARCH_TYPE..."
 curl -fsSL "https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH_TYPE}.tar.gz" -o helm.tar.gz && \
     tar -xzvf helm.tar.gz && \
@@ -86,7 +89,7 @@ curl -fsSL "https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH_TYPE}.tar.gz" 
 
 helm version
 
-# Install kubectl
+# Phase 6: Install kubectl
 echo "Installing kubectl for $ARCH_TYPE..."
 curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH_TYPE}/kubectl" && \
     chmod +x kubectl && \
@@ -99,7 +102,7 @@ if ! command -v kubectl &> /dev/null; then
     exit 1
 fi
 
-# Namespace validation
+# Phase 7: Namespace Validation
 if kubectl get namespace onelens-agent &> /dev/null; then
     echo "Warning: Namespace 'onelens-agent' already exists."
 else
@@ -107,6 +110,7 @@ else
     kubectl create namespace onelens-agent || { echo "Error: Failed to create namespace 'onelens-agent'."; exit 1; }
 fi
 
+# Phase 8: EBS CSI Driver Check and Installation
 check_ebs_driver() {
     local retries=1
     local count=0
@@ -140,10 +144,9 @@ check_ebs_driver
 
 echo "Persistent storage for Prometheus is ENABLED."
 
-# Get the total number of pods in the cluster
+# Phase 9: Cluster Pod Count and Resource Allocation
 TOTAL_PODS=$(kubectl get pods --all-namespaces --no-headers 2>/dev/null | wc -l)
 
-# Check if the command succeeded
 if [ $? -ne 0 ]; then
     echo "Error: Failed to fetch pod details. Please check if Kubernetes is running and kubectl is configured correctly." >&2
     exit 1
@@ -161,6 +164,7 @@ else
     MEMORY_REQUEST="4000Mi"
 fi
 
+# Phase 10: Helm Deployment
 check_var() {
     if [ -z "${!1:-}" ]; then
         echo "Error: $1 is not set"
@@ -170,7 +174,6 @@ check_var() {
 
 check_var CLUSTER_TOKEN
 check_var REGISTRATION_ID
-
 
 helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens/onelens-agent \
     --version "$RELEASE_VERSION" \
@@ -191,6 +194,7 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=prometheus-open
     false
 }
 
+# Phase 11: Finalization
 echo "Installation complete."
 
 echo " Printing $REGISTRATION_ID"
