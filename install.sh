@@ -51,7 +51,7 @@ else
     echo "One or both of registration_id and cluster_token are empty or null."
     exit 1
 fi
-sleep 100
+sleep 2
 # Step 0: Checking prerequisites
 echo "Step 0: Checking prerequisites..."
 
