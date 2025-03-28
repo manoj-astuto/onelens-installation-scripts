@@ -31,16 +31,16 @@ export RELEASE_VERSION IMAGE_TAG API_BASE_URL TOKEN PVC_ENABLED
 
 
 response=$(curl -X POST \
-  https://$API_BASE_URL/v1/kubernetes/registration \
+  "http://$API_BASE_URL/v1/kubernetes/registration" \
   -H "X-Secret-Token: $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{
-    "registration_token": "$REGISTRATION_TOKEN",
-    "cluster_name": "$CLUSTER_NAME",
-    "account_id": "$ACCOUNT",
-    "region": "$REGION",
-    "agent_version": "$RELEASE_VERSION"
-  }')
+  -d "{
+    \"registration_token\": \"$REGISTRATION_TOKEN\",
+    \"cluster_name\": \"$CLUSTER_NAME\",
+    \"account_id\": \"$ACCOUNT\",
+    \"region\": \"$REGION\",
+    \"agent_version\": \"$RELEASE_VERSION\"
+  }")
 
 registration_id=$(echo $response | jq -r '.data.registration_id')
 cluster_token=$(echo $response | jq -r '.data.cluster_token')
@@ -188,14 +188,14 @@ kubectl wait --for=condition=ready pod -l app=onelens-agent -n onelens-agent --t
 }
 
 echo "Installation complete."
-curl -X PUT \
-  https://$API_BASE_URL/v1/kubernetes/registration \
-  -H "X-Secret-Token: $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "registration_id": "$registration_id",
-    "cluster_token": "$cluster_token",
-    "status": "CONNECTED"
-  }'
+curl -X PUT "https://$API_BASE_URL/v1/kubernetes/registration" \
+    -H "X-Secret-Token: $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"registration_id\": \"$registration_id\",
+        \"cluster_token\": \"$cluster_token\",
+        \"status\": \"CONNECTED\"
+    }"
+
 
 echo "To verify deployment: kubectl get pods -n onelens-agent"
