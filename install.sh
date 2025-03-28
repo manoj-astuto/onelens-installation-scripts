@@ -10,8 +10,6 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 
 send_logs() {
     echo "Sending logs to API..."
-    sleep 2
-    sync
     echo "***********************************************************************************************"
     cat "$LOG_FILE"
 }
@@ -154,18 +152,20 @@ helm repo add onelens https://manoj-astuto.github.io/onelens-charts && helm repo
 if [ "$TOTAL_PODS" -lt 100 ]; then
     CPU_REQUEST="500m"
     MEMORY_REQUEST="2000Mi"
+    echo "error1"
+    exit 1 
 else
     CPU_REQUEST="1000m"
     MEMORY_REQUEST="4000Mi"
 fi
 
 check_var() {
-    VAR_VALUE=$(eval echo \$$1)
-    if [ -z "$VAR_VALUE" ]; then
+    if [ -z "${!1:-}" ]; then
         echo "Error: $1 is not set"
         exit 1
     fi
 }
+
 check_var CLUSTER_TOKEN
 check_var REGISTRATION_ID
 
