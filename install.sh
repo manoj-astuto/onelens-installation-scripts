@@ -4,7 +4,7 @@ set -e
 
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
-
+touch "$LOG_FILE"
 # Capture all script output
 exec > >(tee "$LOG_FILE") 2>&1
 
@@ -16,7 +16,7 @@ send_logs() {
 }
 
 # Ensure send_logs runs before exit
-trap 'send_logs; exit 1' ERR
+trap 'send_logs; exit 1' ERR EXIT
 
 
 # Set default values if variables are not set
