@@ -11,6 +11,7 @@ exec > >(tee "$LOG_FILE") 2>&1
 send_logs() {
     echo "Sending logs to API..."
     echo "***********************************************************************************************"
+    sleep 0.1
     cat "$LOG_FILE"
 }
 
