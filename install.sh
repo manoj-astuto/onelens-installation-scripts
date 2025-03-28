@@ -1,12 +1,12 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
 
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
 
 # Capture all script output
-exec > >(tee -a "$LOG_FILE") 2>&1
+exec > >(tee "$LOG_FILE") 2>&1
 
 send_logs() {
     echo "Sending logs to API..."
@@ -15,8 +15,7 @@ send_logs() {
 }
 
 # Ensure send_logs runs before exit
-trap 'send_logs' EXIT
-trap 'send_logs' ERR
+trap 'send_logs; exit 1' ERR
 
 
 # Set default values if variables are not set
