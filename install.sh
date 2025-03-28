@@ -21,7 +21,7 @@ trap 'send_logs; exit 1' ERR EXIT
 
 # Phase 2: Environment Variable Setup
 : "${RELEASE_VERSION:=0.1.1-beta.2}"
-: "${IMAGE_TAG:=v0.1.1-beta.2}"
+: "${IMAGE_TAG:=latest}"
 : "${API_BASE_URL:=https://dev-api.onelens.cloud}"
 : "${TOKEN:=OWMyN2FhZjUtYzljMC00ZWI5LTg1MTgtMWU5NzM0NjllMDU2}"
 : "${PVC_ENABLED:=true}"
