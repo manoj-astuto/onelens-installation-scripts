@@ -187,6 +187,9 @@ kubectl wait --for=jsonpath='{.status.phase}'=Running pod/$(kubectl get pods -n 
 }
 
 echo "Installation complete."
+
+echo " Printing $REGISTRATION_ID"
+echo "Printing $CLUSTER_TOKEN"
 curl -X PUT "http://$API_BASE_URL/v1/kubernetes/registration" \
     -H "X-Secret-Token: $TOKEN" \
     -H "Content-Type: application/json" \
