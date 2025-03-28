@@ -1,5 +1,5 @@
-#!/bin/sh
-set -eu
+#!/bin/bash
+set -euo pipefail
 
 
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
@@ -8,18 +8,17 @@ LOG_FILE="/tmp/${TIMESTAMP}.log"
 # Capture all script output
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-# Function to send logs before exiting
 send_logs() {
     echo "Sending logs to API..."
     sleep 2
     sync
     echo "***********************************************************************************************"
-    cat $LOG_FILE
+    cat "$LOG_FILE"
 }
 
-# Trap EXIT and ERR signals to send logs before exiting
-trap 'send_logs; exit 1' ERR
+# Ensure send_logs runs before exit
 trap 'send_logs' EXIT
+trap 'send_logs' ERR
 
 
 # Set default values if variables are not set
