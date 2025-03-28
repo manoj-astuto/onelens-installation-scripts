@@ -175,6 +175,21 @@ check_var() {
 check_var CLUSTER_TOKEN
 check_var REGISTRATION_ID
 
+# Check if an older version of onelens-agent is already running
+if helm list -n onelens-agent | grep -q "onelens-agent"; then
+    echo "An older version of onelens-agent is already running."
+    CURRENT_VERSION=$(helm get values onelens-agent -n onelens-agent -o json | jq -r '.onelensAgent.image.tag // "unknown"')
+    echo "Current version of onelens-agent: $CURRENT_VERSION"
+
+    if [ "$CURRENT_VERSION" != "$IMAGE_TAG" ]; then
+        echo "Patching onelens-agent to version $IMAGE_TAG..."
+    else
+        echo "onelens-agent is already at the desired version ($IMAGE_TAG)."
+    fi
+else
+    echo "No existing onelens-agent release found. Proceeding with installation."
+fi
+
 helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens/onelens-agent \
     --version "$RELEASE_VERSION" \
     --set onelens-agent.env.CLUSTER_NAME="$CLUSTER_NAME" \
