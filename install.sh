@@ -18,7 +18,6 @@ send_logs() {
 # Ensure send_logs runs before exit
 trap 'send_logs; exit 1' ERR EXIT
 
-
 # Set default values if variables are not set
 : "${RELEASE_VERSION:=0.1.1-beta.2}"
 : "${IMAGE_TAG:=v0.1.1-beta.2}"
@@ -42,13 +41,13 @@ response=$(curl -X POST \
     \"agent_version\": \"$RELEASE_VERSION\"
   }")
 
-registration_id=$(echo $response | jq -r '.data.registration_id')
-cluster_token=$(echo $response | jq -r '.data.cluster_token')
+REGISTRATION_ID=$(echo $response | jq -r '.data.registration_id')
+CLUSTER_TOKEN=$(echo $response | jq -r '.data.cluster_token')
 
-if [[ -n "$registration_id" && "$registration_id" != "null" && -n "$cluster_token" && "$cluster_token" != "null" ]]; then
-    echo "Both registration_id and cluster_token have values."
+if [[ -n "$REGISTRATION_ID" && "$REGISTRATION_ID" != "null" && -n "$CLUSTER_TOKEN" && "$CLUSTER_TOKEN" != "null" ]]; then
+    echo "Both REGISTRATION_ID and CLUSTER_TOKEN have values."
 else
-    echo "One or both of registration_id and cluster_token are empty or null."
+    echo "One or both of REGISTRATION_ID and CLUSTER_TOKEN are empty or null."
     exit 1
 fi
 sleep 2
