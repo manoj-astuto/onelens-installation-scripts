@@ -180,10 +180,10 @@ helm upgrade --install onelens-agent -n onelens-agent --create-namespace onelens
     --set prometheus.server.resources.requests.memory="$MEMORY_REQUEST" \
     --wait || { echo "Error: Helm deployment failed."; exit 1; }
 
-kubectl wait --for=jsonpath='{.status.phase}'=Running pod/$(kubectl get pods -n onelens-agent -l app=onelens-agent --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1].metadata.name}') -n onelens-agent --timeout=120s || {
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=prometheus-opencost-exporter -n onelens-agent --timeout=300s || {
     echo "Error: Pods failed to become ready."
     echo "Installation Failed."
-    exit 1
+    false
 }
 
 echo "Installation complete."
