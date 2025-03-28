@@ -27,7 +27,12 @@ trap 'send_logs; exit 1' ERR EXIT
 
 # Export the variables so they are available in the environment
 export RELEASE_VERSION IMAGE_TAG API_BASE_URL TOKEN PVC_ENABLED
-
+if [ -z "${REGISTRATION_TOKEN:-}" ]; then
+    echo "Error: REGISTRATION_TOKEN is not set"
+    exit 1
+else
+    echo "REGISTRATION_TOKEN is set"
+fi
 
 response=$(curl -X POST \
   "$API_BASE_URL/v1/kubernetes/registration" \
@@ -99,7 +104,7 @@ if kubectl get namespace onelens-agent &> /dev/null; then
     echo "Warning: Namespace 'onelens-agent' already exists."
 else
     echo "Creating namespace 'onelens-agent'..."
-    kubectl create namespace onelens-agent
+    kubectl create namespace onelens-agent || { echo "Error: Failed to create namespace 'onelens-agent'."; exit 1; }
 fi
 
 check_ebs_driver() {
