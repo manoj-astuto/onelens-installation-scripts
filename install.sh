@@ -1,6 +1,6 @@
 #!/bin/bash
-set -e
-
+set -ex
+trap -p
 
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 LOG_FILE="/tmp/${TIMESTAMP}.log"
