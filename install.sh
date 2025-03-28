@@ -191,8 +191,8 @@ curl -X PUT "http://$API_BASE_URL/v1/kubernetes/registration" \
     -H "X-Secret-Token: $TOKEN" \
     -H "Content-Type: application/json" \
     -d "{
-        \"registration_id\": \"$registration_id\",
-        \"cluster_token\": \"$cluster_token\",
+        \"registration_id\": \"$REGISTRATION_ID\",
+        \"cluster_token\": \"$CLUSTER_TOKEN\",
         \"status\": \"CONNECTED\"
     }"
 
