@@ -178,7 +178,7 @@ check_var REGISTRATION_ID
 # Check if an older version of onelens-agent is already running
 if helm list -n onelens-agent | grep -q "onelens-agent"; then
     echo "An older version of onelens-agent is already running."
-    CURRENT_VERSION=$(helm get values onelens-agent -n onelens-agent -o json | jq -r '.onelensAgent.image.tag // "unknown"')
+    CURRENT_VERSION=$(helm get values onelens-agent -n onelens-agent -o json | jq '.["onelens-agent"].image.tag // "unknown"')
     echo "Current version of onelens-agent: $CURRENT_VERSION"
 
     if [ "$CURRENT_VERSION" != "$IMAGE_TAG" ]; then
