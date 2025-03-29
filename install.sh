@@ -185,6 +185,7 @@ if helm list -n onelens-agent | grep -q "onelens-agent"; then
         echo "Patching onelens-agent to version $IMAGE_TAG..."
     else
         echo "onelens-agent is already at the desired version ($IMAGE_TAG)."
+        exit 1
     fi
 else
     echo "No existing onelens-agent release found. Proceeding with installation."
