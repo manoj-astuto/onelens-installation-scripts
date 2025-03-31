@@ -23,7 +23,7 @@ jobs:
       - name: Package Helm Chart
         run: |
           mkdir -p docs
-          helm package charts/* -d docs/
+          helm package charts/onelensdeployer -d docs/
 
       - name: Update Helm Repo Index
         run: |
